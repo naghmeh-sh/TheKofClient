@@ -1,3 +1,5 @@
+# STAY TUNED, FIRST VERSION WILL COME BY DECEMBER 2017. 
+
 # TheKofClient
 A PHP client for [Survey Monkey API V3 https://developer.surveymonkey.com/api/v3/](https://developer.surveymonkey.com/api/v3/)
 Project started 7/11/2017    
