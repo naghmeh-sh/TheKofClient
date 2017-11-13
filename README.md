@@ -64,7 +64,8 @@ is to show API only.** For working examples check the `examples` folder. `...` M
 
 ### Survey
 **fetch** All your surveys. Make sure you have setup the right permission in the APP dashboard on Surveymonkey (Scope: View Surveys)  
-'''
+
+```  
 use \Talis\Services\TheKofClient;
 $Client = new Kof(...);
 $surveys_list = $Client->surveys()->get(); //returns a collection (iterable) of your surveys. Defaults to page size of 100 (i.e. the first 100 surveys you own).
@@ -72,11 +73,12 @@ $surveys_list = $Client->surveys()->get(2,10); //returns a collection (iterable)
 $one_survey   = $Client->surveys(survey_id)->get();//return survey object for survey id=survey_id
 
 $collectors_list = $Client->surveys(survey_id)->collectors()->get();//return collection of Survey Collectors for survey id=survey_id, again, same paging rules as above apply
-$one_collector   = $Client->surveys(survey_id)->collectors(collector_id)->get(); //return a collector object for collector id = collector_id
-'''
+$one_collector   = $Client->surveys(survey_id)->collectors(collector_id)->get(); //return a collector object for collector id = collector_id  
+```  
+
 
 **dry** Each method has a `*_dry()` version which can be used without an HTTP client, and will return a data structure represnting the request (url/headers/body)  
-'''
+```  
 $Client = new Kof(...);
 $surveys_list_request_data = $Client->surveys()->get_dry();
 $surveys_list_request_data = $Client->surveys()->get_dry(2,10);
@@ -84,4 +86,4 @@ $one_survey_request_data   = $Client->surveys(survey_id)->get_dry();
 
 $collectors_list_request_data = $Client->surveys(survey_id)->collectors()->get_dry();
 $one_collector_request_data   = $Client->surveys(survey_id)->collectors(collector_id)->get_dry();
-'''
+``` 
