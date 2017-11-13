@@ -36,19 +36,19 @@ But, it is a stand alone project.
 
 ### Installation  
 **Using TalisMS**  
-copy `source/Talis/Services/TheKofClient` folder of this project, and put it under
+copy `source/Talis/Services/TheKof` folder of this project, and put it under
 `Talis/Services/` If TalisMS is properly installed in your project. It is done.
 ```
-mv path/to/source/Talis/Services/TheKofClient path/to/your/Talis/Services/.
+mv path/to/source/Talis/Services/TheKof path/to/your/Talis/Services/.
 ```
 
 **Use as standalone lib with autoloader**  
 Put `source/Talis` in your include path for PHP.  
 If you use autoloader, it should translate namespace separators \\ and underscores _ to url path separators /  
 and add .php at the end.  
-Example: The class `\Talis\Services\TheKofClient\Client` will be included like that:   
+Example: The class `\Talis\Services\TheKof\SurveyMonkeyClient` will be included like that:   
 ```
-require_once('Talis/Services/TheKofClient/Client.php');
+require_once('Talis/Services/TheKof/SurveyMonkeyClient.php');
 ```
 
 **Use as standalone lib with simple includes**  
@@ -66,8 +66,8 @@ is to show API only.** For working examples check the `examples` folder. `...` M
 **fetch** All your surveys. Make sure you have setup the right permission in the APP dashboard on Surveymonkey (Scope: View Surveys)  
 
 ```  
-use \Talis\Services\TheKofClient;
-$Client = new Kof(...);
+use \Talis\Services\TheKof;
+$Client = new SurveyMonkeyClient(...);
 $surveys_list = $Client->surveys()->get(); //returns a collection (iterable) of your surveys. Defaults to page size of 100 (i.e. the first 100 surveys you own).
 $surveys_list = $Client->surveys()->get(2,10); //returns a collection (iterable) of your surveys. Page 2 where page size is 10 surveys
 $one_survey   = $Client->surveys(survey_id)->get();//return survey object for survey id=survey_id
@@ -79,7 +79,7 @@ $one_collector   = $Client->surveys(survey_id)->collectors(collector_id)->get();
 
 **dry** Each method has a `*_dry()` version which can be used without an HTTP client, and will return a data structure represnting the request (url/headers/body)  
 ```  
-$Client = new Kof(...);
+$Client = new SurveyMonkeyClient(...);
 $surveys_list_request_data = $Client->surveys()->get_dry();
 $surveys_list_request_data = $Client->surveys()->get_dry(2,10);
 $one_survey_request_data   = $Client->surveys(survey_id)->get_dry();
