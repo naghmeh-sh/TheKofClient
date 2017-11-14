@@ -16,4 +16,5 @@ class Env{
 }
 
 
+require_once '../source/Talis/Services/TheKof/DryRequest.php';
 require_once '../source/Talis/Services/TheKof/SurveyMonkeyClient.php';
