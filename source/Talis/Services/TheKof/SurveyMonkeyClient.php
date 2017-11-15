@@ -23,7 +23,7 @@ class SurveyMonkeyClient{
 	 * Http client to handle actual http request.
 	 * Make sure to configure that object ahead of sending it to this class
 	 * 
-	 * @var Zend\Http\Client
+	 * @var \Zend\Http\Client
 	 */	
 	private $HttpClient = null;
 	
@@ -42,9 +42,10 @@ class SurveyMonkeyClient{
 	 * @param Zend\Http\Client $HttpClient
 	 * @throws \InvalidArgumentException
 	 */
-	public function __construct(array $config,Zend\Http\Client $HttpClient=null){
+	public function __construct(array $config,\Zend\Http\Client $HttpClient=null){
 		$this->validate_config_attributes($config);
-		$this->config = $config;
+		$this->config     = $config;
+		$this->HttpClient = $HttpClient; 
 	}
 	
 	/**
@@ -94,5 +95,23 @@ class SurveyMonkeyClient{
 			}
 		}
 		return $this->current_dry_request;
+	}
+	
+	/**
+	 * Performs the actual GET http, uses dry request to generate the values 
+	 * for the http request
+	 * 
+	 * @param int $page
+	 * @param int $per_page
+	 */
+	public function get(int $page=0,int $per_page=0){
+		$this->get_dry($page,$per_page);
+		
+		//TODO later move to it's own method
+		$this->HttpClient->setMethod($this->current_dry_request->method());
+		$this->HttpClient->setUri($this->current_dry_request->url());
+		$this->HttpClient->setHeaders($this->current_dry_request->headers());
+		$response = $this->HttpClient->send();
+		var_dump($response->getBody()); THIS IS WHERE I STOPPED!!!!!!!!11111111111111111111111111111111
 	}
 }
