@@ -21,9 +21,35 @@ class DryRequest{
 		]);
 	}
 	
+	public function __toString(){
+		$res = new \stdClass;
+		$res->url     = $this->url;
+		$res->method  = $this->method;
+		$res->headers = $this->headers;
+		$res->body    = $this->body;
+		return json_encode($res);
+	}
+	
+	/**
+	 * Sets the url to input value
+	 * 
+	 * @param string $url
+	 * @return string url
+	 */
 	public function url(string $url=''):string{
 		return $this->url = $url?:$this->url;
 	}
+	
+	/**
+	 * Concats to the current url
+	 * 
+	 * @param string $concate_url
+	 * @return string the modified url
+	 */
+	public function url_add(string $concate_url):string{
+		return $this->url .= $concate_url;
+	}
+	
 	
 	public function method(string $method=''):string{
 		return $this->method= $method?:$this->method;

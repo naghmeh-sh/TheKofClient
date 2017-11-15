@@ -75,12 +75,24 @@ class SurveyMonkeyClient{
 	}
 	
 	/**
-	 * Adds paging to url and return;
+	 * Adds paging (if values entered and return a Dry reques 
+	 * with the needed info to construct an http request
+	 * (You could technically create a wrapper on top of this method
+	 *  to generate curl, Zend CLient or any other way to do the actual http).
+	 *  
+	 * @param int $page if zero, parameter will be ommited and SM defaults will be used
+	 * @param int $per_page if zero, parameter will be ommited and SM defaults will be used
 	 * 
-	 * @return \Talis\Services\TheKof\DryRequest
+	 * @return DryRequest
 	 */
-	public function get_dry(){
+	public function get_dry(int $page=0,int $per_page=0):DryRequest{
 		$this->current_dry_request->method(DryRequest::METHOD_GET);
+		if($page > 0){
+			$this->current_dry_request->url_add("?page={$page}");
+			if($per_page > 0){
+				$this->current_dry_request->url_add("&per_page={$per_page}");
+			}
+		}
 		return $this->current_dry_request;
 	}
 }

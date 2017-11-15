@@ -26,19 +26,68 @@ class SurveyMonkeyClient_test extends TestCase {
 		$this->assertInstanceOf(\Talis\Services\TheKof\SurveyMonkeyClient::class, $Client,'Client did not initiate with test configuration');
 	}
 	
-	public function testGetRequest(){
+	public function testGetDryRequest(){
+		dbgn('Testing GET requests');
+		// init
+		$access_token = Env::$survey_monkey_config['access_token'];
 		$Client = new Talis\Services\TheKof\SurveyMonkeyClient(Env::$survey_monkey_config);
 		$fake_survey_id = 1234;
+		$headers = [
+				'Authorization' => "bearer {$access_token}",
+				'Content-type'  => 'application/json'
+		];
 		
-		//default request
-		$access_token = Env::$survey_monkey_config['access_token'];
+		// TESTS 
+		
+		//1. default request
+		$expected_url = "https://api.surveymonkey.net/v3/surveys/{$fake_survey_id}";
 		$ExpectedDryRequest = new \Talis\Services\TheKof\DryRequest(Env::$survey_monkey_config['access_token']);
-		$ExpectedDryRequest->headers();
-		$ExpectedDryRequest->url("https://api.surveymonkey.net/v3/surveys/{$fake_survey_id}");
+		$ExpectedDryRequest->url($expected_url);
 		$ExpectedDryRequest->method(\Talis\Services\TheKof\DryRequest::METHOD_GET);
 		
 		$ActualDryRequest = $Client->surveys($fake_survey_id)->get_dry();
 		$this->assertInstanceOf(\Talis\Services\TheKof\DryRequest::class, $ActualDryRequest,'Dry request must return a \Talis\Services\TheKof\DryRequest object');
 		$this->assertEquals($ExpectedDryRequest,$ActualDryRequest,'response structure is not same');
+		
+		$this->assertEquals($expected_url, $ActualDryRequest->url(),'url does not match');
+		$this->assertEquals('GET', $ActualDryRequest->method(),'METHOD does not match');
+		$this->assertEquals($headers, $ActualDryRequest->headers(),'headers do not match');
+		
+		//2. page one, default size
+		$expected_url = "https://api.surveymonkey.net/v3/surveys/{$fake_survey_id}?page=1";
+		$ExpectedDryRequest = new \Talis\Services\TheKof\DryRequest(Env::$survey_monkey_config['access_token']);
+		$ExpectedDryRequest->url($expected_url);
+		$ExpectedDryRequest->method(\Talis\Services\TheKof\DryRequest::METHOD_GET);
+		
+		$ActualDryRequest = $Client->surveys($fake_survey_id)->get_dry(1);
+		$this->assertEquals($ExpectedDryRequest,$ActualDryRequest,'(page 1) response structure is not same');
+
+		$this->assertEquals($expected_url, $ActualDryRequest->url(),'url does not match');
+		$this->assertEquals('GET', $ActualDryRequest->method(),'METHOD does not match');
+		$this->assertEquals($headers, $ActualDryRequest->headers(),'headers do not match');
+		
+		
+		//3. page 2 size 10
+		$expected_url = "https://api.surveymonkey.net/v3/surveys/{$fake_survey_id}?page=2&per_page=10";
+		$ExpectedDryRequest = new \Talis\Services\TheKof\DryRequest(Env::$survey_monkey_config['access_token']);
+		$ExpectedDryRequest->url($expected_url);
+		$ExpectedDryRequest->method(\Talis\Services\TheKof\DryRequest::METHOD_GET);
+		
+		$ActualDryRequest = $Client->surveys($fake_survey_id)->get_dry(2,10);
+		$this->assertEquals($ExpectedDryRequest,$ActualDryRequest,'(page 2,10) response structure is not same');
+		
+		$this->assertEquals($expected_url, $ActualDryRequest->url(),'url does not match');
+		$this->assertEquals('GET', $ActualDryRequest->method(),'METHOD does not match');
+		$this->assertEquals($headers, $ActualDryRequest->headers(),'headers do not match');
+	}
+	
+	/**
+	 * I am using a mock HTTP client that emulates Zend Http Client (ZFW2)
+	 * methods and returns a mock JSON same as what SM would return.
+	 * Over time, more tests needs to be added for error handling.
+	 */
+	public function testGetMockLiveRequest(){
+		$http_client = new MockZendFWHttpClient;
+		
 	}
 }
