@@ -2,4 +2,5 @@
 .buildpath
 .project
 tests/phpunit-6.4.4.phar
+examples/env.php
 
