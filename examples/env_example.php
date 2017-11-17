@@ -21,11 +21,16 @@ spl_autoload_register('autoload');
 $fl = dirname(__FILE__);
 require_once $fl . '/../source/Talis/Services/TheKof/DryRequest.php';
 require_once $fl . '/../source/Talis/Services/TheKof/SurveyMonkeyClient.php';
+require_once $fl . '/../source/Talis/Services/TheKof/HTTPClientWrapper/a.php';
+require_once $fl . '/../source/Talis/Services/TheKof/HTTPClientWrapper/ZendFW2.php';
 
-$http_client = new \Zend\Http\Client(null, [
+
+$concrete_http_client = new \Zend\Http\Client(null, [
 		'adapter' => 'Zend\Http\Client\Adapter\Curl',
 		'sslverifypeer' => false,
 		'maxredirects' => 1,
 		'timeout'      => 10,
 		'useragent'    => 'theKofClient_Examples'
 ]);
+
+$http_client_wrapper = new \Talis\Services\TheKof\HTTPClientWrapper_ZendFW2($concrete_http_client);
