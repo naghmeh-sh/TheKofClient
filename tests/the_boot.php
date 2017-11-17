@@ -68,5 +68,6 @@ require_once '../source/Talis/Services/TheKof/Util/DryRequest.php';
 require_once '../source/Talis/Services/TheKof/SurveyMonkeyClient.php';
 require_once '../source/Talis/Services/TheKof/HTTPClientWrapper/a.php';
 require_once '../source/Talis/Services/TheKof/HTTPClientWrapper/ZendFW2.php';
+require_once '../source/Talis/Services/TheKof/Client/a.php';
 
 

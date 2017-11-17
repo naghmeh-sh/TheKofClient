@@ -20,6 +20,7 @@ class HTTPClientWrapper_ZendFW2 extends HTTPClientWrapper_a{
 	 * @return Util_Response
 	 */
 	public function execute_dry_request(Util_DryRequest $DryRequest):Util_Response{
+		echo "\n==================================================\nDOing " . $DryRequest->url() . "\n\n\n\n";
 		$this->concrete_http_client->setMethod($DryRequest->method());
 		$this->concrete_http_client->setUri($DryRequest->url());
 		$this->concrete_http_client->setHeaders($DryRequest->headers());
