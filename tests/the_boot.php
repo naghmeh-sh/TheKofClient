@@ -24,7 +24,7 @@ class Env{
 class MockZendFWHttpClient{
 	
 	public 	$uri='',
-			$method = \Talis\Services\TheKof\DryRequest::METHOD_GET,
+			$method = \Talis\Services\TheKof\HTTPClientWrapper_a::METHOD_GET,
 			$body=null,
 			$response_body = null
 	;
@@ -64,5 +64,9 @@ class MockZendFWHttpClient{
 }
 
 
-require_once '../source/Talis/Services/TheKof/DryRequest.php';
+require_once '../source/Talis/Services/TheKof/Util/DryRequest.php';
 require_once '../source/Talis/Services/TheKof/SurveyMonkeyClient.php';
+require_once '../source/Talis/Services/TheKof/HTTPClientWrapper/a.php';
+require_once '../source/Talis/Services/TheKof/HTTPClientWrapper/ZendFW2.php';
+
+

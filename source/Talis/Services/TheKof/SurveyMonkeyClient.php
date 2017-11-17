@@ -34,7 +34,7 @@ class SurveyMonkeyClient{
 	 * This variable is where I store the current request the client is 
 	 * working on.
 	 * 
-	 * @var DryRequest
+	 * @var Util_DryRequest
 	 */
 	private $current_dry_request = null;
 	
@@ -70,7 +70,7 @@ class SurveyMonkeyClient{
 	 */
 	public function surveys(int $survey_id = 0):SurveyMonkeyClient{
 		//survey is a major object -> I reset the requests
-		$this->current_dry_request = new DryRequest($this->config['access_token']);
+		$this->current_dry_request = new Util_DryRequest($this->config['access_token']);
 		$this->current_dry_request->url(self::SURVEY_MONKEY_SERVICE_URL . '/surveys' . ($survey_id?"/{$survey_id}":''));
 		
 		return $this;
@@ -85,10 +85,10 @@ class SurveyMonkeyClient{
 	 * @param int $page if zero, parameter will be ommited and SM defaults will be used
 	 * @param int $per_page if zero, parameter will be ommited and SM defaults will be used
 	 * 
-	 * @return DryRequest
+	 * @return Util_Util_DryRequest
 	 */
-	public function get_dry(int $page=0,int $per_page=0):DryRequest{
-		$this->current_dry_request->method(DryRequest::METHOD_GET);
+	public function get_dry(int $page=0,int $per_page=0):Util_DryRequest{
+		$this->current_dry_request->method(HTTPClientWrapper_a::METHOD_GET);
 		if($page > 0){
 			$this->current_dry_request->url_add("?page={$page}");
 			if($per_page > 0){
@@ -108,5 +108,6 @@ class SurveyMonkeyClient{
 	public function get(int $page=0,int $per_page=0){
 		$this->get_dry($page,$per_page);
 		$response = $this->HttpClientWrapper->execute_dry_request($this->current_dry_request);
+		var_dump($response);
 	}
 }

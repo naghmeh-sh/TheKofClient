@@ -12,12 +12,14 @@ abstract class HTTPClientWrapper_a{
 	 * @var string $METHOD_PUT
 	 * @var string $METHOD_DELETE
 	 * @var string $METHOD_OPTIONS
+	 * @var string $METHOD_HEAD
 	 */
 	const METHOD_GET	 = 'GET',
 		  METHOD_POST	 = 'POST',
 		  METHOD_PUT	 = 'PUT',
 		  METHOD_DELETE  = 'DELETE',
-		  METHOD_OPTIONS = 'OPTIONS'
+		  METHOD_OPTIONS = 'OPTIONS',
+		  METHOD_HEAD	 = 'HEAD'
 	;
 	
 	/**
@@ -38,9 +40,9 @@ abstract class HTTPClientWrapper_a{
 	 * This is where the actual translation from DryRequest info to the actual client
 	 * is happening.
 	 * 
-	 * @param DryRequest $DryRequest
+	 * @param Util_DryRequest $DryRequest
 	 * TODO what do I return here? a dry response?
 	 */
-	abstract public function execute_dry_request(DryRequest $DryRequest);
+	abstract public function execute_dry_request(Util_DryRequest $DryRequest):Util_Response;
 }
 

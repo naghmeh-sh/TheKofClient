@@ -9,8 +9,7 @@
  * @date   14/11/2017
  *
  */
-class DryRequest{
-	const METHOD_GET	= 'GET';
+class Util_DryRequest{
 	
 	private $url,$method,$body,$headers;
 	

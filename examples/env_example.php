@@ -19,7 +19,8 @@ function autoload($class) {
 spl_autoload_register('autoload');
 
 $fl = dirname(__FILE__);
-require_once $fl . '/../source/Talis/Services/TheKof/DryRequest.php';
+require_once $fl . '/../source/Talis/Services/TheKof/Util/DryRequest.php';
+require_once $fl . '/../source/Talis/Services/TheKof/Util/Response.php';
 require_once $fl . '/../source/Talis/Services/TheKof/SurveyMonkeyClient.php';
 require_once $fl . '/../source/Talis/Services/TheKof/HTTPClientWrapper/a.php';
 require_once $fl . '/../source/Talis/Services/TheKof/HTTPClientWrapper/ZendFW2.php';

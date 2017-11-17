@@ -41,12 +41,12 @@ class SurveyMonkeyClient_test extends TestCase {
 		
 		//1. default request
 		$expected_url = "https://api.surveymonkey.net/v3/surveys/{$fake_survey_id}";
-		$ExpectedDryRequest = new \Talis\Services\TheKof\DryRequest(Env::$survey_monkey_config['access_token']);
+		$ExpectedDryRequest = new \Talis\Services\TheKof\Util_DryRequest(Env::$survey_monkey_config['access_token']);
 		$ExpectedDryRequest->url($expected_url);
-		$ExpectedDryRequest->method(\Talis\Services\TheKof\DryRequest::METHOD_GET);
+		$ExpectedDryRequest->method(\Talis\Services\TheKof\HTTPClientWrapper_a::METHOD_GET);
 		
 		$ActualDryRequest = $Client->surveys($fake_survey_id)->get_dry();
-		$this->assertInstanceOf(\Talis\Services\TheKof\DryRequest::class, $ActualDryRequest,'Dry request must return a \Talis\Services\TheKof\DryRequest object');
+		$this->assertInstanceOf(\Talis\Services\TheKof\Util_DryRequest::class, $ActualDryRequest,'Dry request must return a \Talis\Services\TheKof\DryRequest object');
 		$this->assertEquals($ExpectedDryRequest,$ActualDryRequest,'response structure is not same');
 		
 		$this->assertEquals($expected_url, $ActualDryRequest->url(),'url does not match');
@@ -55,9 +55,9 @@ class SurveyMonkeyClient_test extends TestCase {
 		
 		//2. page one, default size
 		$expected_url = "https://api.surveymonkey.net/v3/surveys/{$fake_survey_id}?page=1";
-		$ExpectedDryRequest = new \Talis\Services\TheKof\DryRequest(Env::$survey_monkey_config['access_token']);
+		$ExpectedDryRequest = new \Talis\Services\TheKof\Util_DryRequest(Env::$survey_monkey_config['access_token']);
 		$ExpectedDryRequest->url($expected_url);
-		$ExpectedDryRequest->method(\Talis\Services\TheKof\DryRequest::METHOD_GET);
+		$ExpectedDryRequest->method(\Talis\Services\TheKof\HTTPClientWrapper_a::METHOD_GET);
 		
 		$ActualDryRequest = $Client->surveys($fake_survey_id)->get_dry(1);
 		$this->assertEquals($ExpectedDryRequest,$ActualDryRequest,'(page 1) response structure is not same');
@@ -69,9 +69,9 @@ class SurveyMonkeyClient_test extends TestCase {
 		
 		//3. page 2 size 10
 		$expected_url = "https://api.surveymonkey.net/v3/surveys/{$fake_survey_id}?page=2&per_page=10";
-		$ExpectedDryRequest = new \Talis\Services\TheKof\DryRequest(Env::$survey_monkey_config['access_token']);
+		$ExpectedDryRequest = new \Talis\Services\TheKof\Util_DryRequest(Env::$survey_monkey_config['access_token']);
 		$ExpectedDryRequest->url($expected_url);
-		$ExpectedDryRequest->method(\Talis\Services\TheKof\DryRequest::METHOD_GET);
+		$ExpectedDryRequest->method(\Talis\Services\TheKof\HTTPClientWrapper_a::METHOD_GET);
 		
 		$ActualDryRequest = $Client->surveys($fake_survey_id)->get_dry(2,10);
 		$this->assertEquals($ExpectedDryRequest,$ActualDryRequest,'(page 2,10) response structure is not same');
