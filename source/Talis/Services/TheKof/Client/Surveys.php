@@ -25,6 +25,9 @@ class Client_Surveys extends Client_a{
 		$CollectorsClient = new Client_Collectors($this->config,$this->HttpClientWrapper,$this->current_dry_request);
 		$CollectorsClient->set_id($collector_id);
 		return $CollectorsClient;
-		
+	}
+	
+	protected function translate_to_model(\stdClass $single_item):Model_a{
+		return new Model_Survey($single_item);
 	}
 }

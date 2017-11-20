@@ -8,7 +8,7 @@
  * @date   17/11/2017
  *
  */
-class Util_Response{
+class Util_RawResponse{
 	public $http_code,
 		   $http_code_message,
 		   $headers,

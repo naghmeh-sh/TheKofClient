@@ -43,6 +43,6 @@ abstract class HTTPClientWrapper_a{
 	 * @param Util_DryRequest $DryRequest
 	 * TODO what do I return here? a dry response?
 	 */
-	abstract public function execute_dry_request(Util_DryRequest $DryRequest):Util_Response;
+	abstract public function execute_dry_request(Util_DryRequest $DryRequest):Util_RawResponse;
 }
 

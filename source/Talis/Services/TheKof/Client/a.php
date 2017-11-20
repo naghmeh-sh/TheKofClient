@@ -102,10 +102,9 @@ abstract class Client_a{
 	 * @param int $page
 	 * @param int $per_page
 	 */
-	public function get(int $page=0,int $per_page=0){
+	public function get(int $page=0,int $per_page=0):Util_Collection{
 		$this->get_dry($page,$per_page);
-		$response = $this->HttpClientWrapper->execute_dry_request($this->current_dry_request);
-		var_dump($response);
+		return $this->build_asset($this->HttpClientWrapper->execute_dry_request($this->current_dry_request));
 	}
 	
 	/**
@@ -119,6 +118,30 @@ abstract class Client_a{
 		}
 	}
 	
+	/**
+	 * Takes the raw response and sends the appropriate translator
+	 * to the collection object.
+	 * The translation to the right model is done LAZY
+	 * 
+	 * @param Util_RawResponse $RawResponse
+	 * @return Util_Collection
+	 */
+	protected function build_asset(Util_RawResponse $RawResponse):Util_Collection{
+		$that = $this;
+		$translation_func = function(\stdClass $single_item) use ($that){
+			return $that->translate_to_model($single_item);
+		};
+		return new Util_Collection($RawResponse,$translation_func);
+	}
+
 	abstract protected function add_url_part():void;
 	
+	/**
+	 * For each item/asset type there is one translator from stdClass object to 
+	 * a specific Model object 
+	 *  
+	 * @param \stdClass $single_item
+	 * @return Model_a
+	 */
+	abstract protected function translate_to_model(\stdClass $single_item):Model_a;
 }
