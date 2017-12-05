@@ -10,7 +10,7 @@
  */
 class SurveyMonkeyClient extends Client_a{
 	
-	protected function translate_to_model(\stdClass $single_item):Model_a{
+	protected function translate_to_model(\stdClass $single_item,Client_a $client):Model_a{
 		return null; //do nothing. This is the base of the chain TODO potentially this can break the code. But, this is a piece of dead code...
 	}
 	

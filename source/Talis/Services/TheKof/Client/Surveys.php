@@ -26,8 +26,14 @@ class Client_Surveys extends Client_a{
 		$CollectorsClient->set_id($collector_id);
 		return $CollectorsClient;
 	}
-	
-	protected function translate_to_model(\stdClass $single_item):Model_a{
-		return new Model_Survey($single_item);
+
+	/**
+	 * Sends the data of a single item to the right model class
+	 * 
+	 * {@inheritDoc}
+	 * @see \Talis\Services\TheKof\Client_a::translate_to_model()
+	 */
+	protected function translate_to_model(\stdClass $single_item,Client_a $client):Model_a{
+		return new Model_Survey($single_item,$client);
 	}
 }

@@ -101,6 +101,8 @@ abstract class Client_a{
 	 *
 	 * @param int $page
 	 * @param int $per_page
+	 * 
+	 * @return Util_Collection
 	 */
 	public function get(int $page=0,int $per_page=0):Util_Collection{
 		$this->get_dry($page,$per_page);
@@ -108,14 +110,43 @@ abstract class Client_a{
 	}
 	
 	/**
+	 * If u expect only one item (you set the item id), or u just need the first item in
+	 * a collection, use this method, which will return the Model object for the specific item you are looking for.
+	 * It will also trigger the full data load on this object (TODO verify it is needed)
+	 * 
+	 * @return Model_a
+	 */
+	public function get_one():Model_a{
+		$collection = $this->get();
+		return $collection->current();
+	}
+	
+	
+	
+	/**
 	 * If requesting a specific id, add it to the url
 	 * @param integer $asset_id
+	 * @return Client_a
 	 */
-	public function set_id(int $asset_id):void{
+	public function set_id(int $asset_id):Client_a{
 		if($asset_id){
 			$this->current_dry_request->url_add("/{$asset_id}");
 			$this->asset_id_received = true;
 		}
+		return $this;
+	}
+	
+	/**
+	 * Overrides any previously entered URL with the entered one.
+	 * You can also use that directly, comes handy especially when u use the hrefs 
+	 * in the reponse
+	 * 
+	 * @param string $href
+	 * @return Client_a
+	 */
+	public function set_href(string $href):Client_a{
+		$this->current_dry_request->url($href);
+		return $this;
 	}
 	
 	/**
@@ -129,7 +160,7 @@ abstract class Client_a{
 	protected function build_asset(Util_RawResponse $RawResponse):Util_Collection{
 		$that = $this;
 		$translation_func = function(\stdClass $single_item) use ($that){
-			return $that->translate_to_model($single_item);
+			return $that->translate_to_model($single_item,$that);
 		};
 		return new Util_Collection($RawResponse,$translation_func);
 	}
@@ -141,7 +172,9 @@ abstract class Client_a{
 	 * a specific Model object 
 	 *  
 	 * @param \stdClass $single_item
+	 * @param Client_a $client used to fully load the model if there is a need. If the model is fully loaded, it will be discarded.
+	 * 
 	 * @return Model_a
 	 */
-	abstract protected function translate_to_model(\stdClass $single_item):Model_a;
+	abstract protected function translate_to_model(\stdClass $single_item,Client_a $client):Model_a;
 }

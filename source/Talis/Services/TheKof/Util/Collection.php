@@ -59,18 +59,29 @@ class Util_Collection implements \Iterator{
 	 * @param Util_RawResponse $RawResponse
 	 */
 	private function parse_raw_response(Util_RawResponse $RawResponse):void{
-		$this->data_collection 			= $RawResponse->body->data;
-		$this->total_entries_in_query 	= $RawResponse->body->total;
-		$this->page_size 				= $RawResponse->body->per_page;
-		$this->page 					= $RawResponse->body->page;
-		
-		$this->link_previous			= $RawResponse->body->prev??null;
-		$this->link_next				= $RawResponse->body->next??null;
+		//NOTICE! if the query fetches only one result, then the response wont have [data].
+		//It will have ONLY the one, fully loaded, object
+		if(isset($RawResponse->body->id) && $RawResponse->body->id){//one full object was returned
+			$this->data_collection 			= [$RawResponse->body];
+			$this->total_entries_in_query 	= 1;
+			$this->page_size 				= 1;
+			$this->page 					= 1;
+			$this->link_previous			= null;
+			$this->link_next				= null;
+		} else { //a real collection
+			$this->data_collection 			= $RawResponse->body->data;
+			$this->total_entries_in_query 	= $RawResponse->body->total;
+			$this->page_size 				= $RawResponse->body->per_page;
+			$this->page 					= $RawResponse->body->page;
+			$this->link_previous			= $RawResponse->body->prev??null;//at the edges u can still get null here 
+			$this->link_next				= $RawResponse->body->next??null;//at the edges u can still get null here
+		}
 	}
 	
 	
 	public function current(){
-		return current($this->data_collection);
+		$func = $this->translation_func;
+		return $func(current($this->data_collection));
 	}
 	
 	public function next(){
