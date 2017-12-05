@@ -9,11 +9,8 @@ if(!is_numeric(Env::$survey_id_to_query)){
 	exit;
 }
 
-if(!is_numeric(Env::$collector_id_to_query)){
-	echo "\nERROR!  You must put a numeric collector id in the env at Env::\$collector_id_to_query in env.php\n";
-	exit;
-}
-
 $Client = new \Talis\Services\TheKof\SurveyMonkeyClient(Env::$survey_monkey_config,$http_client_wrapper);//this two params are coming from the env.php file
-$collector = $Client->surveys(Env::$survey_id_to_query)->collectors(Env::$collector_id_to_query)->get_one();
-var_dump($collector);
+$collectors = $Client->surveys(Env::$survey_id_to_query)->collectors()->get();
+foreach($collectors as $collector){
+	var_dump($collector->fully_load()->get_raw_data());
+}

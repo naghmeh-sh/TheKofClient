@@ -44,6 +44,7 @@ require_once $fl . '/../source/Talis/Services/TheKof/HTTPClientWrapper/ZendFW2.p
 require_once $fl . '/../source/Talis/Services/TheKof/Client/Surveys.php';
 require_once $fl . '/../source/Talis/Services/TheKof/Client/Collectors.php';
 require_once $fl . '/../source/Talis/Services/TheKof/Model/Survey.php';
+require_once $fl . '/../source/Talis/Services/TheKof/Model/Collector.php';
 
 $concrete_http_client = new \Zend\Http\Client(null, [
 		'adapter' => 'Zend\Http\Client\Adapter\Curl',

@@ -10,4 +10,7 @@ if(!is_numeric(Env::$survey_id_to_query)){
 }
 
 $Client = new \Talis\Services\TheKof\SurveyMonkeyClient(Env::$survey_monkey_config,$http_client_wrapper);//this two params are coming from the env.php file
-$all_surveys = $Client->surveys(Env::$survey_id_to_query)->collectors()->get();
+$collectors = $Client->surveys(Env::$survey_id_to_query)->collectors()->get();
+foreach($collectors as $collector){
+	var_dump($collector->get_raw_data());
+}
