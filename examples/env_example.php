@@ -19,7 +19,7 @@ class Env{
 }
 
 /**
- * Default auto loader
+ * For the purpose of using ZFW
  * @param unknown $class
  */
 function autoload($class) {
@@ -29,22 +29,7 @@ function autoload($class) {
 }
 spl_autoload_register('autoload');
 
-
-//including TheKof
-$fl = dirname(__FILE__);
-require_once $fl . '/../source/Talis/Services/TheKof/Client/a.php';
-require_once $fl . '/../source/Talis/Services/TheKof/HTTPClientWrapper/a.php';
-require_once $fl . '/../source/Talis/Services/TheKof/Model/a.php';
-
-require_once $fl . '/../source/Talis/Services/TheKof/Util/DryRequest.php';
-require_once $fl . '/../source/Talis/Services/TheKof/Util/RawResponse.php';
-require_once $fl . '/../source/Talis/Services/TheKof/Util/Collection.php';
-require_once $fl . '/../source/Talis/Services/TheKof/SurveyMonkeyClient.php';
-require_once $fl . '/../source/Talis/Services/TheKof/HTTPClientWrapper/ZendFW2.php';
-require_once $fl . '/../source/Talis/Services/TheKof/Client/Surveys.php';
-require_once $fl . '/../source/Talis/Services/TheKof/Client/Collectors.php';
-require_once $fl . '/../source/Talis/Services/TheKof/Model/Survey.php';
-require_once $fl . '/../source/Talis/Services/TheKof/Model/Collector.php';
+require_once dirname(__FILE__). '/../bundle/thekofclient.php';
 
 $concrete_http_client = new \Zend\Http\Client(null, [
 		'adapter' => 'Zend\Http\Client\Adapter\Curl',
