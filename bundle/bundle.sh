@@ -1,4 +1,5 @@
 #!/bin/bash
+rm thekofclient.php
 cd ../source
 find . -type f -name '*.php' -exec cat {} + >> ../bundle/thekofclient.php
 cd ../bundle

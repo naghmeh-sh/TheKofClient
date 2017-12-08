@@ -13,16 +13,20 @@ class SurveyMonkeyClient_test extends TestCase {
 		dbgn('Testing configuration values');
 	}
 	
+	static private function get_proper_client(){
+		return Talis\Services\TheKof\SurveyMonkeyClient::init(Env::$survey_monkey_config,new Talis\Services\TheKof\HTTPClientWrapper_TestWrapper);
+	}
+	
 	/**
 	 * Tests the get/set params
 	 */
 	public function testConfiguremissingAccessToekn(){
 		$this->expectException(InvalidArgumentException::class);
-		$Client = new Talis\Services\TheKof\SurveyMonkeyClient([]);
+		$Client = Talis\Services\TheKof\SurveyMonkeyClient::init([],new Talis\Services\TheKof\HTTPClientWrapper_TestWrapper);
 	}
 	
 	public function testConfigureWithAccessToekn(){
-		$Client = new Talis\Services\TheKof\SurveyMonkeyClient(Env::$survey_monkey_config);
+		$Client = self::get_proper_client();
 		$this->assertInstanceOf(\Talis\Services\TheKof\SurveyMonkeyClient::class, $Client,'Client did not initiate with test configuration');
 	}
 	
@@ -30,7 +34,7 @@ class SurveyMonkeyClient_test extends TestCase {
 		dbgn('Testing GET requests');
 		// init
 		$access_token = Env::$survey_monkey_config['access_token'];
-		$Client = new Talis\Services\TheKof\SurveyMonkeyClient(Env::$survey_monkey_config);
+		$Client = self::get_proper_client();
 		$fake_survey_id = 1234;
 		$headers = [
 				'Authorization' => "bearer {$access_token}",
