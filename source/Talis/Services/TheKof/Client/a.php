@@ -53,8 +53,13 @@ abstract class Client_a{
 	}
 	
 
-	
-	
+	/**
+	 * If we have a query, we start each section with this char
+	 * Every method that uses it, need to change it to '&' to prevent two ? in
+	 * url
+	 * @var string
+	 */
+	protected $query_separator_char = '?';
 	
 	/**
 	 * Client builds requests, according to called methods and params.
@@ -102,10 +107,12 @@ abstract class Client_a{
 	public function get_dry(int $page=0,int $per_page=0):Util_DryRequest{
 		$this->current_dry_request->method(HTTPClientWrapper_a::METHOD_GET);
 		if($page > 0){
-			$this->current_dry_request->url_add("?page={$page}");
+			$this->current_dry_request->url_add("{$this->query_separator_char}page={$page}");
+			$this->query_separator_char = '&';
 			if($per_page > 0){
-				$this->current_dry_request->url_add("&per_page={$per_page}");
+				$this->current_dry_request->url_add("{$this->query_separator_char}per_page={$per_page}");
 			}
+			
 		}
 		return $this->current_dry_request;
 	}
@@ -145,6 +152,20 @@ abstract class Client_a{
 			$this->current_dry_request->url_add("/{$asset_id}");
 			$this->asset_id_received = true;
 		}
+		return $this;
+	}
+	
+	/**
+	 * adds query params
+	 * 
+	 * title=xxxx This also works with partial names, will return all matching
+	 * 
+	 * @param string $query_string
+	 * @return Client_a
+	 */
+	public function query(string $query_string):Client_a{
+		$this->current_dry_request->url_add("{$this->query_separator_char}{$query_string}");
+		$this->query_separator_char = '&';
 		return $this;
 	}
 	

@@ -18,50 +18,35 @@ class Env{
 	static public $survey_monkey_config = ['access_token' => 'this_is_a_test_access_code_you_should_see_it_in_mock_requests'];
 }
 
+require_once '../bundle/thekofclient.php';
+
 /**
- * Emulates ZFW http client methods
+ * @author Itay Moav
+ * @Date Dec 8 - 2017
  */
-class MockZendFWHttpClient{
+class TestHTTPClientWrapper extends \Talis\Services\TheKof\HTTPClientWrapper_a{
 	
-	public 	$uri='',
-			$method = \Talis\Services\TheKof\HTTPClientWrapper_a::METHOD_GET,
-			$body=null,
-			$response_body = null
-	;
-	
-	public function setUri($url){
-		$this->uri = $url;
-	}
-	
-	public function setMethod(string $method){
-		$this->method = $method;
-	}
-	
-	public function setRawBody($body){
-		$this->body = $body;
-	}
-	
-	public function send(){
-		return $this->response_body;
+	public function __construct(){
+		$this->concrete_http_client = null;
 	}
 	
 	/**
-	 * according to the url+method 
-	 * this is where the "magic" happens and different 
-	 * responses are returned.
+	 * This is where the actual translation from DryRequest info to the actual client
+	 * is happening.
+	 *
+	 * @param Util_DryRequest $DryRequest
+	 * @return Util_RawResponse
 	 */
-	public function getRawRequestData(){
-			
-	}
-	
-	public function setHeaders(array $headers){
-		//boohooo
-	}
-	
-	public function resetParameters($something){
-		//naahhhhh
+	public function execute_dry_request(\Talis\Services\TheKof\Util_DryRequest $DryRequest):\Talis\Services\TheKof\Util_RawResponse{
+		echo "\n==================================================\nDOing " . $DryRequest->url() . "\n\n\n\n";
+		$Response = new \Talis\Services\TheKof\Util_RawResponse;
+		$Response->http_code 			= 200;
+		$Response->http_code_message	= 'baba was here - all is good';
+		$Response->headers				= [];
+		$Response->body					= new stdClass;
+		return $Response;
 	}
 }
 
-require_once '../bundle/thekofclient.php';
+
 

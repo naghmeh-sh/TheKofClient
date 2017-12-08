@@ -16,6 +16,8 @@ class Env{
 	static public $survey_id_to_query   = 'PUT AN INTEGER HERE. You can figure out survey ids by calling the get_all_your_surveys.php example and check the output';
 	
 	static public $collector_id_to_query   = 'PUT AN INTEGER HERE. You can figure out collector ids by calling the get_one_survey_all_collectors.php example and check the output';
+	
+	static public $survey_name_to_query    = 'Put here a survey name';
 }
 
 /**

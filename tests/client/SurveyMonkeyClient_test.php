@@ -14,7 +14,7 @@ class SurveyMonkeyClient_test extends TestCase {
 	}
 	
 	static private function get_proper_client(){
-		return Talis\Services\TheKof\SurveyMonkeyClient::init(Env::$survey_monkey_config,new Talis\Services\TheKof\HTTPClientWrapper_TestWrapper);
+		return Talis\Services\TheKof\SurveyMonkeyClient::init(Env::$survey_monkey_config,new TestHTTPClientWrapper);
 	}
 	
 	/**
@@ -22,7 +22,7 @@ class SurveyMonkeyClient_test extends TestCase {
 	 */
 	public function testConfiguremissingAccessToekn(){
 		$this->expectException(InvalidArgumentException::class);
-		$Client = Talis\Services\TheKof\SurveyMonkeyClient::init([],new Talis\Services\TheKof\HTTPClientWrapper_TestWrapper);
+		$Client = Talis\Services\TheKof\SurveyMonkeyClient::init([],new TestHTTPClientWrapper);
 	}
 	
 	public function testConfigureWithAccessToekn(){
@@ -90,8 +90,7 @@ class SurveyMonkeyClient_test extends TestCase {
 	 * methods and returns a mock JSON same as what SM would return.
 	 * Over time, more tests needs to be added for error handling.
 	 */
-	public function testGetMockLiveRequest(){
-		$http_client = new MockZendFWHttpClient;
+//	public function testGetMockLiveRequest(){
 		
-	}
+//	}
 }
