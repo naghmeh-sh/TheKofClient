@@ -12,8 +12,15 @@ if(!is_string(Env::$survey_name_to_query)){
 }
 
 $Client = \Talis\Services\TheKof\SurveyMonkeyClient::init(Env::$survey_monkey_config,$http_client_wrapper);//this two params are coming from the env.php file
-$query='title=' . Env::$survey_name_to_query;
+$query='title=test';// . Env::$survey_name_to_query;
 $surveys = $Client->surveys()->query($query)->get(1,2);
 foreach ($surveys as $survey){
+	echo "\n\n================================================\n";
 	var_dump($survey->get_raw_data());
+	
+	//BELOW I SHOW HOW THE DRILL DOWN CAN ALSO BE QUERIED, in this example I query the collectors nicknames.
+	$collectors = $survey->collectors()->query('name=course')->get();//CHANGE the 'course' to any word you have in your own collectors
+	foreach($collectors as $collector){
+		var_dump($collector);
+	}
 }
