@@ -22,7 +22,7 @@ class Client_Surveys extends Client_a{
 			throw new \LogicException('Missing survey id when drilldown into collectors');
 		}
 		//survey is a major object -> I reset the requests
-		$CollectorsClient = new Client_Collectors($this->config,$this->HttpClientWrapper,$this->current_dry_request);
+		$CollectorsClient = new Client_Collectors($this->current_dry_request);
 		$CollectorsClient->set_id($collector_id);
 		return $CollectorsClient;
 	}
@@ -33,7 +33,7 @@ class Client_Surveys extends Client_a{
 	 * {@inheritDoc}
 	 * @see \Talis\Services\TheKof\Client_a::translate_to_model()
 	 */
-	protected function translate_to_model(\stdClass $single_item,Client_a $client):Model_a{
-		return new Model_Survey($single_item,$client);
+	protected function translate_to_model(\stdClass $single_item):Model_a{
+		return new Model_Survey($single_item);
 	}
 }

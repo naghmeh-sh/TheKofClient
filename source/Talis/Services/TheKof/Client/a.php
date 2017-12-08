@@ -9,12 +9,12 @@ abstract class Client_a{
 	const SURVEY_MONKEY_SERVICE_URL = 'https://api.surveymonkey.net/v3';
 	
 	/**
-	 * Configure values for this class
+	 * Configure values for this group of classes
 	 *      access_token string : get it from SurveyMonkey app settings page
 	 *
 	 * @var array
 	 */
-	protected $config = [];
+	static protected $config = [];
 	
 	/**
 	 * Http client Wrapper to handle actual http request.
@@ -23,7 +23,38 @@ abstract class Client_a{
 	 *
 	 * @var HTTPClientWrapper_a
 	 */
-	protected $HttpClientWrapper = null;
+	static protected $HttpClientWrapper = null;
+	
+	/**
+	 * Inits the client system
+	 * The values entered here are gobal and immutable
+	 * 
+	 * @param array $config
+	 * @param HTTPClientWrapper_a $HttpClientWrapper
+	 * @throws \InvalidArgumentException
+	 */
+	static public function megatherion_init(array $config,HTTPClientWrapper_a $HttpClientWrapper){
+		self::megatherion_validate_config_attributes($config);
+		self::$config = $config;
+		self::$HttpClientWrapper = $HttpClientWrapper;
+	}
+	
+	/**
+	 * Validates the $config array that has the necessary values
+	 *
+	 * @param array $config ['access_token']
+	 *
+	 * @throws \InvalidArgumentException
+	 */
+	static private function megatherion_validate_config_attributes(array $config):void{
+		if(!isset($config['access_token'])){
+			throw new \InvalidArgumentException('Missing access_token in $config');
+		}
+	}
+	
+
+	
+	
 	
 	/**
 	 * Client builds requests, according to called methods and params.
@@ -52,25 +83,9 @@ abstract class Client_a{
 	 * 
 	 * @throws \InvalidArgumentException
 	 */
-	public function __construct(array $config,HTTPClientWrapper_a $HttpClientWrapper=null,Util_DryRequest $current_dry_request = null){
-		$this->validate_config_attributes($config);
-		$this->config     = $config;
-		$this->HttpClientWrapper = $HttpClientWrapper;
+	public function __construct(Util_DryRequest $current_dry_request = null){
 		$this->current_dry_request = $current_dry_request;
 		$this->add_url_part();//for each asset, adds the API point for it
-	}
-	
-	/**
-	 * Validates the $config array that has the necessary values
-	 *
-	 * @param array $config ['access_token']
-	 *
-	 * @throws \InvalidArgumentException
-	 */
-	protected function validate_config_attributes(array $config):void{
-		if(!isset($config['access_token'])){
-			throw new \InvalidArgumentException('Missing access_token in $config');
-		}
 	}
 	
 	/**
@@ -106,7 +121,7 @@ abstract class Client_a{
 	 */
 	public function get(int $page=0,int $per_page=0):Util_Collection{
 		$this->get_dry($page,$per_page);
-		return $this->build_asset($this->HttpClientWrapper->execute_dry_request($this->current_dry_request));
+		return $this->build_asset(self::$HttpClientWrapper->execute_dry_request($this->current_dry_request));
 	}
 	
 	/**
@@ -117,11 +132,8 @@ abstract class Client_a{
 	 * @return Model_a
 	 */
 	public function get_one():Model_a{
-		$collection = $this->get();
-		return $collection->current();
+		return $this->get()->current();
 	}
-	
-	
 	
 	/**
 	 * If requesting a specific id, add it to the url
@@ -129,7 +141,7 @@ abstract class Client_a{
 	 * @return Client_a
 	 */
 	public function set_id(int $asset_id):Client_a{
-		if($asset_id){
+		if($asset_id || $this->asset_id_received){
 			$this->current_dry_request->url_add("/{$asset_id}");
 			$this->asset_id_received = true;
 		}
@@ -137,6 +149,8 @@ abstract class Client_a{
 	}
 	
 	/**
+	 * THIS IS ALWAYS TO LOAD THE CURRENT ITEM, ONLY ONE!
+	 * 
 	 * Overrides any previously entered URL with the entered one.
 	 * You can also use that directly, comes handy especially when u use the hrefs 
 	 * in the reponse
@@ -160,7 +174,7 @@ abstract class Client_a{
 	protected function build_asset(Util_RawResponse $RawResponse):Util_Collection{
 		$that = $this;
 		$translation_func = function(\stdClass $single_item) use ($that){
-			return $that->translate_to_model($single_item,$that);
+			return $that->translate_to_model($single_item);
 		};
 		return new Util_Collection($RawResponse,$translation_func);
 	}
@@ -176,5 +190,5 @@ abstract class Client_a{
 	 * 
 	 * @return Model_a
 	 */
-	abstract protected function translate_to_model(\stdClass $single_item,Client_a $client):Model_a;
+	abstract protected function translate_to_model(\stdClass $single_item):Model_a;
 }

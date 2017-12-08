@@ -23,12 +23,9 @@ class Env{
  * @param unknown $class
  */
 function autoload($class) {
-	//Comment out untill further notice, do not remove	  if(!@include_once getClassAutoloadPath($class)){
-	$file_path = str_replace(['_','\\'],'/',$class) . '.php';
-	require_once $file_path;
+	require_once str_replace(['_','\\'],'/',$class) . '.php';
 }
 spl_autoload_register('autoload');
-
 require_once dirname(__FILE__). '/../bundle/thekofclient.php';
 
 $concrete_http_client = new \Zend\Http\Client(null, [

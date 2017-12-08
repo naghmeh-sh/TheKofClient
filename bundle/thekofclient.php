@@ -93,13 +93,32 @@ DOing " . $DryRequest->url() . "
 
 class Model_Survey extends Model_a{
 
+	protected function get_client():Client_a{
+		return (new SurveyMonkeyClient)->surveys($this->item_data->id);
+	}
+	
 	protected function set_if_fully_loaded(){
 		$this->is_fully_loaded = isset($this->item_data->response_count);
+	}
+	
+	/**
+	 * Get the collectors client for the current survey
+	 * collectors
+	 * 
+	 * @param int $collector_id
+	 * @return Client_Collectors
+	 */
+	public function collectors(int $collector_id=0):Client_Collectors{
+		return $this->get_client()->collectors($collector_id);
 	}
 }
 
 class Model_Collector extends Model_a{
 
+	protected function get_client():Client_a{
+		return (new SurveyMonkeyClient)->collector($this->item_data->id);
+	}
+	
 	protected function set_if_fully_loaded(){
 		$this->is_fully_loaded = isset($this->item_data->date_created);
 	}
@@ -115,25 +134,14 @@ abstract class Model_a{
 	protected $is_fully_loaded = false;
 	
 	/**
-	 * If there is a need to fully load the data from SM,
-	 * This is the client we should use.
-	 * 
-	 * @var Client_a
-	 */
-	protected $client_to_fully_load;
-	
-	/**
 	 * The original data object from SM
 	 * @var \stdClass
 	 */
 	protected $item_data;
 	
-	public function __construct(\stdClass $single_item,Client_a $client_to_fully_load){
+	public function __construct(\stdClass $single_item){
 		$this->item_data = $single_item;
 		$this->set_if_fully_loaded();
-		if(!$this->is_fully_loaded){
-			$this->client_to_fully_load = $client_to_fully_load;
-		}
 	}
 	
 	/**
@@ -144,8 +152,7 @@ abstract class Model_a{
 	 */
 	public function fully_load():Model_a{
 		if(!$this->is_fully_loaded){
-			$this->item_data = $this->client_to_fully_load->set_href($this->item_data->href)->get_one()->item_data;
-			$this->client_to_fully_load = null;
+			$this->item_data = $this->get_client()->get_one()->item_data;
 		}
 		return $this;
 	}
@@ -158,11 +165,28 @@ abstract class Model_a{
 	public function get_raw_data():\stdClass{
 		return $this->item_data;
 	}
+
+	/**
+	 * get method for item id
+	 * 
+	 * @return integer
+	 */
+	public function id():int{
+		return $this->item_data->id*1;
+	}
 	
 	/**
 	 * Sets the $is_fully_loaded flag according to the info found in item_data
 	 */
 	abstract protected function set_if_fully_loaded();
+	
+	/**
+	 * Returns a client where the current 
+	 * item is the top of the drill down.
+	 * 
+	 * @return Client_a
+	 */
+	abstract protected function get_client():Client_a;
 		
 }
 
@@ -362,12 +386,12 @@ abstract class Client_a{
 	const SURVEY_MONKEY_SERVICE_URL = 'https://api.surveymonkey.net/v3';
 	
 	/**
-	 * Configure values for this class
+	 * Configure values for this group of classes
 	 *      access_token string : get it from SurveyMonkey app settings page
 	 *
 	 * @var array
 	 */
-	protected $config = [];
+	static protected $config = [];
 	
 	/**
 	 * Http client Wrapper to handle actual http request.
@@ -376,7 +400,38 @@ abstract class Client_a{
 	 *
 	 * @var HTTPClientWrapper_a
 	 */
-	protected $HttpClientWrapper = null;
+	static protected $HttpClientWrapper = null;
+	
+	/**
+	 * Inits the client system
+	 * The values entered here are gobal and immutable
+	 * 
+	 * @param array $config
+	 * @param HTTPClientWrapper_a $HttpClientWrapper
+	 * @throws \InvalidArgumentException
+	 */
+	static public function megatherion_init(array $config,HTTPClientWrapper_a $HttpClientWrapper){
+		self::megatherion_validate_config_attributes($config);
+		self::$config = $config;
+		self::$HttpClientWrapper = $HttpClientWrapper;
+	}
+	
+	/**
+	 * Validates the $config array that has the necessary values
+	 *
+	 * @param array $config ['access_token']
+	 *
+	 * @throws \InvalidArgumentException
+	 */
+	static private function megatherion_validate_config_attributes(array $config):void{
+		if(!isset($config['access_token'])){
+			throw new \InvalidArgumentException('Missing access_token in $config');
+		}
+	}
+	
+
+	
+	
 	
 	/**
 	 * Client builds requests, according to called methods and params.
@@ -405,25 +460,9 @@ abstract class Client_a{
 	 * 
 	 * @throws \InvalidArgumentException
 	 */
-	public function __construct(array $config,HTTPClientWrapper_a $HttpClientWrapper=null,Util_DryRequest $current_dry_request = null){
-		$this->validate_config_attributes($config);
-		$this->config     = $config;
-		$this->HttpClientWrapper = $HttpClientWrapper;
+	public function __construct(Util_DryRequest $current_dry_request = null){
 		$this->current_dry_request = $current_dry_request;
 		$this->add_url_part();//for each asset, adds the API point for it
-	}
-	
-	/**
-	 * Validates the $config array that has the necessary values
-	 *
-	 * @param array $config ['access_token']
-	 *
-	 * @throws \InvalidArgumentException
-	 */
-	protected function validate_config_attributes(array $config):void{
-		if(!isset($config['access_token'])){
-			throw new \InvalidArgumentException('Missing access_token in $config');
-		}
 	}
 	
 	/**
@@ -459,7 +498,7 @@ abstract class Client_a{
 	 */
 	public function get(int $page=0,int $per_page=0):Util_Collection{
 		$this->get_dry($page,$per_page);
-		return $this->build_asset($this->HttpClientWrapper->execute_dry_request($this->current_dry_request));
+		return $this->build_asset(self::$HttpClientWrapper->execute_dry_request($this->current_dry_request));
 	}
 	
 	/**
@@ -470,11 +509,8 @@ abstract class Client_a{
 	 * @return Model_a
 	 */
 	public function get_one():Model_a{
-		$collection = $this->get();
-		return $collection->current();
+		return $this->get()->current();
 	}
-	
-	
 	
 	/**
 	 * If requesting a specific id, add it to the url
@@ -482,7 +518,7 @@ abstract class Client_a{
 	 * @return Client_a
 	 */
 	public function set_id(int $asset_id):Client_a{
-		if($asset_id){
+		if($asset_id || $this->asset_id_received){
 			$this->current_dry_request->url_add("/{$asset_id}");
 			$this->asset_id_received = true;
 		}
@@ -490,6 +526,8 @@ abstract class Client_a{
 	}
 	
 	/**
+	 * THIS IS ALWAYS TO LOAD THE CURRENT ITEM, ONLY ONE!
+	 * 
 	 * Overrides any previously entered URL with the entered one.
 	 * You can also use that directly, comes handy especially when u use the hrefs 
 	 * in the reponse
@@ -513,7 +551,7 @@ abstract class Client_a{
 	protected function build_asset(Util_RawResponse $RawResponse):Util_Collection{
 		$that = $this;
 		$translation_func = function(\stdClass $single_item) use ($that){
-			return $that->translate_to_model($single_item,$that);
+			return $that->translate_to_model($single_item);
 		};
 		return new Util_Collection($RawResponse,$translation_func);
 	}
@@ -529,7 +567,7 @@ abstract class Client_a{
 	 * 
 	 * @return Model_a
 	 */
-	abstract protected function translate_to_model(\stdClass $single_item,Client_a $client):Model_a;
+	abstract protected function translate_to_model(\stdClass $single_item):Model_a;
 }
 
 
@@ -556,7 +594,7 @@ class Client_Surveys extends Client_a{
 			throw new \LogicException('Missing survey id when drilldown into collectors');
 		}
 		//survey is a major object -> I reset the requests
-		$CollectorsClient = new Client_Collectors($this->config,$this->HttpClientWrapper,$this->current_dry_request);
+		$CollectorsClient = new Client_Collectors($this->current_dry_request);
 		$CollectorsClient->set_id($collector_id);
 		return $CollectorsClient;
 	}
@@ -567,8 +605,8 @@ class Client_Surveys extends Client_a{
 	 * {@inheritDoc}
 	 * @see \Talis\Services\TheKof\Client_a::translate_to_model()
 	 */
-	protected function translate_to_model(\stdClass $single_item,Client_a $client):Model_a{
-		return new Model_Survey($single_item,$client);
+	protected function translate_to_model(\stdClass $single_item):Model_a{
+		return new Model_Survey($single_item);
 	}
 }
 
@@ -584,8 +622,8 @@ class Client_Collectors extends Client_a{
 		$this->current_dry_request->url_add('/collectors');
 	}
 	
-	protected function translate_to_model(\stdClass $single_item,Client_a $client):Model_a{
-		return new Model_Collector($single_item,$client);
+	protected function translate_to_model(\stdClass $single_item):Model_a{
+		return new Model_Collector($single_item);
 	}
 }
 
@@ -601,10 +639,34 @@ class Client_Collectors extends Client_a{
  */
 class SurveyMonkeyClient extends Client_a{
 	
-	protected function translate_to_model(\stdClass $single_item,Client_a $client):Model_a{
+	/**
+	 * Init system and return a ready survey monkey client
+	 * 
+	 * @param array $config
+	 * @param HTTPClientWrapper_a $HttpClientWrapper
+	 * @return SurveyMonkeyClient
+	 */
+	static public function init(array $config,HTTPClientWrapper_a $HttpClientWrapper):SurveyMonkeyClient{
+		self::megatherion_init($config, $HttpClientWrapper);
+		return new SurveyMonkeyClient;
+	}
+	
+	/**
+	 * Shutdown, as this client has no model attached.
+	 * 
+	 * {@inheritDoc}
+	 * @see \Talis\Services\TheKof\Client_a::translate_to_model()
+	 */
+	protected function translate_to_model(\stdClass $single_item):Model_a{
 		return null; //do nothing. This is the base of the chain TODO potentially this can break the code. But, this is a piece of dead code...
 	}
 	
+	/**
+	 * shutdown as this client has no direct queries
+	 * 
+	 * {@inheritDoc}
+	 * @see \Talis\Services\TheKof\Client_a::add_url_part()
+	 */
 	protected function add_url_part():void{
 		//do nothing. This is the base of the chain	
 	}
@@ -616,11 +678,25 @@ class SurveyMonkeyClient extends Client_a{
 	 * @return SurveyMonkeyClient
 	 */
 	public function surveys(int $survey_id = 0):Client_Surveys{
-		//survey is a major object -> I reset the requests
-		$this->current_dry_request = new Util_DryRequest($this->config['access_token']);
+		$this->current_dry_request = new Util_DryRequest(self::$config['access_token']);
 		$this->current_dry_request->url(self::SURVEY_MONKEY_SERVICE_URL);// ($survey_id?"/{$survey_id}":''));
-		$SurveyClient = new Client_Surveys($this->config,$this->HttpClientWrapper,$this->current_dry_request);
+		$SurveyClient = new Client_Surveys($this->current_dry_request);
 		$SurveyClient->set_id($survey_id);
 		return $SurveyClient;
+	}
+	
+	/**
+	 * this is not a drill down, this is to get 
+	 * a client for a known collector.
+	 * This is the top method
+	 * 
+	 * @param int $collector_id
+	 */
+	public function collector(int $collector_id):Client_Collectors{
+		$this->current_dry_request = new Util_DryRequest(self::$config['access_token']);
+		$this->current_dry_request->url(self::SURVEY_MONKEY_SERVICE_URL);// ($survey_id?"/{$survey_id}":''));
+		$CollectorClient = new Client_Collectors($this->current_dry_request);
+		$CollectorClient->set_id($collector_id);
+		return $CollectorClient;
 	}
 }

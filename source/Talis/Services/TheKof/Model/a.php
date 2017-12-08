@@ -9,25 +9,14 @@ abstract class Model_a{
 	protected $is_fully_loaded = false;
 	
 	/**
-	 * If there is a need to fully load the data from SM,
-	 * This is the client we should use.
-	 * 
-	 * @var Client_a
-	 */
-	protected $client_to_fully_load;
-	
-	/**
 	 * The original data object from SM
 	 * @var \stdClass
 	 */
 	protected $item_data;
 	
-	public function __construct(\stdClass $single_item,Client_a $client_to_fully_load){
+	public function __construct(\stdClass $single_item){
 		$this->item_data = $single_item;
 		$this->set_if_fully_loaded();
-		if(!$this->is_fully_loaded){
-			$this->client_to_fully_load = $client_to_fully_load;
-		}
 	}
 	
 	/**
@@ -38,8 +27,7 @@ abstract class Model_a{
 	 */
 	public function fully_load():Model_a{
 		if(!$this->is_fully_loaded){
-			$this->item_data = $this->client_to_fully_load->set_href($this->item_data->href)->get_one()->item_data;
-			$this->client_to_fully_load = null;
+			$this->item_data = $this->get_client()->get_one()->item_data;
 		}
 		return $this;
 	}
@@ -52,10 +40,27 @@ abstract class Model_a{
 	public function get_raw_data():\stdClass{
 		return $this->item_data;
 	}
+
+	/**
+	 * get method for item id
+	 * 
+	 * @return integer
+	 */
+	public function id():int{
+		return $this->item_data->id*1;
+	}
 	
 	/**
 	 * Sets the $is_fully_loaded flag according to the info found in item_data
 	 */
 	abstract protected function set_if_fully_loaded();
+	
+	/**
+	 * Returns a client where the current 
+	 * item is the top of the drill down.
+	 * 
+	 * @return Client_a
+	 */
+	abstract protected function get_client():Client_a;
 		
 }
