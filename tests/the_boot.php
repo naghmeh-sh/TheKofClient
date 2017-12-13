@@ -24,7 +24,7 @@ require_once '../bundle/thekofclient.php';
  * @author Itay Moav
  * @Date Dec 8 - 2017
  */
-class TestHTTPClientWrapper extends \Talis\Services\TheKof\HTTPClientWrapper_a{
+class TestHTTPClientWrapper extends \Talis\Extensions\TheKof\HTTPClientWrapper_a{
 	
 	public function __construct(){
 		$this->concrete_http_client = null;
@@ -37,9 +37,9 @@ class TestHTTPClientWrapper extends \Talis\Services\TheKof\HTTPClientWrapper_a{
 	 * @param Util_DryRequest $DryRequest
 	 * @return Util_RawResponse
 	 */
-	public function execute_dry_request(\Talis\Services\TheKof\Util_DryRequest $DryRequest):\Talis\Services\TheKof\Util_RawResponse{
+	public function execute_dry_request(\Talis\Extensions\TheKof\Util_DryRequest $DryRequest):\Talis\Extensions\TheKof\Util_RawResponse{
 		echo "\n==================================================\nDOing " . $DryRequest->url() . "\n\n\n\n";
-		$Response = new \Talis\Services\TheKof\Util_RawResponse;
+		$Response = new \Talis\Extensions\TheKof\Util_RawResponse;
 		$Response->http_code 			= 200;
 		$Response->http_code_message	= 'baba was here - all is good';
 		$Response->headers				= [];

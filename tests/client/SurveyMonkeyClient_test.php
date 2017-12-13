@@ -14,7 +14,7 @@ class SurveyMonkeyClient_test extends TestCase {
 	}
 	
 	static private function get_proper_client(){
-		return Talis\Services\TheKof\SurveyMonkeyClient::init(Env::$survey_monkey_config,new TestHTTPClientWrapper);
+		return Talis\Extensions\TheKof\SurveyMonkeyClient::init(Env::$survey_monkey_config,new TestHTTPClientWrapper);
 	}
 	
 	/**
@@ -22,12 +22,12 @@ class SurveyMonkeyClient_test extends TestCase {
 	 */
 	public function testConfiguremissingAccessToekn(){
 		$this->expectException(InvalidArgumentException::class);
-		$Client = Talis\Services\TheKof\SurveyMonkeyClient::init([],new TestHTTPClientWrapper);
+		$Client = Talis\Extensions\TheKof\SurveyMonkeyClient::init([],new TestHTTPClientWrapper);
 	}
 	
 	public function testConfigureWithAccessToekn(){
 		$Client = self::get_proper_client();
-		$this->assertInstanceOf(\Talis\Services\TheKof\SurveyMonkeyClient::class, $Client,'Client did not initiate with test configuration');
+		$this->assertInstanceOf(\Talis\Extensions\TheKof\SurveyMonkeyClient::class, $Client,'Client did not initiate with test configuration');
 	}
 	
 	public function testGetDryRequest(){
@@ -45,12 +45,12 @@ class SurveyMonkeyClient_test extends TestCase {
 		
 		//1. default request
 		$expected_url = "https://api.surveymonkey.net/v3/surveys/{$fake_survey_id}";
-		$ExpectedDryRequest = new \Talis\Services\TheKof\Util_DryRequest(Env::$survey_monkey_config['access_token']);
+		$ExpectedDryRequest = new \Talis\Extensions\TheKof\Util_DryRequest(Env::$survey_monkey_config['access_token']);
 		$ExpectedDryRequest->url($expected_url);
-		$ExpectedDryRequest->method(\Talis\Services\TheKof\HTTPClientWrapper_a::METHOD_GET);
+		$ExpectedDryRequest->method(\Talis\Extensions\TheKof\HTTPClientWrapper_a::METHOD_GET);
 		
 		$ActualDryRequest = $Client->surveys($fake_survey_id)->get_dry();
-		$this->assertInstanceOf(\Talis\Services\TheKof\Util_DryRequest::class, $ActualDryRequest,'Dry request must return a \Talis\Services\TheKof\DryRequest object');
+		$this->assertInstanceOf(\Talis\Extensions\TheKof\Util_DryRequest::class, $ActualDryRequest,'Dry request must return a \Talis\Extensions\TheKof\DryRequest object');
 		$this->assertEquals($ExpectedDryRequest,$ActualDryRequest,'response structure is not same');
 		
 		$this->assertEquals($expected_url, $ActualDryRequest->url(),'url does not match');
@@ -59,9 +59,9 @@ class SurveyMonkeyClient_test extends TestCase {
 		
 		//2. page one, default size
 		$expected_url = "https://api.surveymonkey.net/v3/surveys/{$fake_survey_id}?page=1";
-		$ExpectedDryRequest = new \Talis\Services\TheKof\Util_DryRequest(Env::$survey_monkey_config['access_token']);
+		$ExpectedDryRequest = new \Talis\Extensions\TheKof\Util_DryRequest(Env::$survey_monkey_config['access_token']);
 		$ExpectedDryRequest->url($expected_url);
-		$ExpectedDryRequest->method(\Talis\Services\TheKof\HTTPClientWrapper_a::METHOD_GET);
+		$ExpectedDryRequest->method(\Talis\Extensions\TheKof\HTTPClientWrapper_a::METHOD_GET);
 		
 		$ActualDryRequest = $Client->surveys($fake_survey_id)->get_dry(1);
 		$this->assertEquals($ExpectedDryRequest,$ActualDryRequest,'(page 1) response structure is not same');
@@ -73,9 +73,9 @@ class SurveyMonkeyClient_test extends TestCase {
 		
 		//3. page 2 size 10
 		$expected_url = "https://api.surveymonkey.net/v3/surveys/{$fake_survey_id}?page=2&per_page=10";
-		$ExpectedDryRequest = new \Talis\Services\TheKof\Util_DryRequest(Env::$survey_monkey_config['access_token']);
+		$ExpectedDryRequest = new \Talis\Extensions\TheKof\Util_DryRequest(Env::$survey_monkey_config['access_token']);
 		$ExpectedDryRequest->url($expected_url);
-		$ExpectedDryRequest->method(\Talis\Services\TheKof\HTTPClientWrapper_a::METHOD_GET);
+		$ExpectedDryRequest->method(\Talis\Extensions\TheKof\HTTPClientWrapper_a::METHOD_GET);
 		
 		$ActualDryRequest = $Client->surveys($fake_survey_id)->get_dry(2,10);
 		$this->assertEquals($ExpectedDryRequest,$ActualDryRequest,'(page 2,10) response structure is not same');

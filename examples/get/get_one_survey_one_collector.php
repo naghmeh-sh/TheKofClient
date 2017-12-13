@@ -14,6 +14,6 @@ if(!is_numeric(Env::$collector_id_to_query)){
 	exit;
 }
 
-$Client = \Talis\Services\TheKof\SurveyMonkeyClient::init(Env::$survey_monkey_config,$http_client_wrapper);//this two params are coming from the env.php file
+$Client = \Talis\Extensions\TheKof\SurveyMonkeyClient::init(Env::$survey_monkey_config,$http_client_wrapper);//this two params are coming from the env.php file
 $collector = $Client->surveys(Env::$survey_id_to_query)->collectors(Env::$collector_id_to_query)->get_one();
 var_dump($collector);

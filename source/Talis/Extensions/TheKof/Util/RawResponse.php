@@ -1,4 +1,4 @@
-<?php namespace Talis\Services\TheKof;
+<?php namespace Talis\Extensions\TheKof;
 /**
  * Data structure for holding a unified response object
  * from which ever http client u wish to use.

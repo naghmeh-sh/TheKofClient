@@ -38,4 +38,4 @@ $concrete_http_client = new \Zend\Http\Client(null, [
 		'useragent'    => 'theKofClient_Examples'
 ]);
 
-$http_client_wrapper = new \Talis\Services\TheKof\HTTPClientWrapper_ZendFW2($concrete_http_client);
+$http_client_wrapper = new \Talis\Extensions\TheKof\HTTPClientWrapper_ZendFW2($concrete_http_client);

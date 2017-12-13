@@ -1,4 +1,4 @@
-<?php namespace Talis\Services\TheKof;
+<?php namespace Talis\Extensions\TheKof;
 /**
  * Surveys client
  * 
@@ -31,7 +31,7 @@ class Client_Surveys extends Client_a{
 	 * Sends the data of a single item to the right model class
 	 * 
 	 * {@inheritDoc}
-	 * @see \Talis\Services\TheKof\Client_a::translate_to_model()
+	 * @see \Talis\Extensions\TheKof\Client_a::translate_to_model()
 	 */
 	protected function translate_to_model(\stdClass $single_item):Model_a{
 		return new Model_Survey($single_item);

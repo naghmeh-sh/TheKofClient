@@ -1,4 +1,4 @@
-<?php namespace Talis\Services\TheKof;
+<?php namespace Talis\Extensions\TheKof;
 /**
  * Takes a raw resonse with a translatore and translates 
  * each element in raw response to it's model. 

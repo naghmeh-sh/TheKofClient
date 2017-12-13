@@ -1,4 +1,4 @@
-<?php namespace Talis\Services\TheKof;
+<?php namespace Talis\Extensions\TheKof;
 class Model_Collector extends Model_a{
 
 	protected function get_client():Client_a{

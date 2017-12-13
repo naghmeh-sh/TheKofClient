@@ -1,4 +1,4 @@
-<?php namespace Talis\Services\TheKof;
+<?php namespace Talis\Extensions\TheKof;
 /**
  * Collectors client
  * 

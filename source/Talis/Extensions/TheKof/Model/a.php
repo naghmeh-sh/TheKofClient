@@ -1,4 +1,4 @@
-<?php namespace Talis\Services\TheKof;
+<?php namespace Talis\Extensions\TheKof;
 abstract class Model_a{
 	/**
 	 * When querying a collection (as opposed to one item by id) the result returns

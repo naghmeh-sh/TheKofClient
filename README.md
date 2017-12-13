@@ -36,19 +36,19 @@ But, it is a stand alone project.
 
 ### Installation  
 **Using TalisMS**  
-copy `source/Talis/Services/TheKof` folder of this project, and put it under
-`Talis/Services/` If TalisMS is properly installed in your project. It is done.
+copy `source/Talis/Extensions/TheKof` folder of this project, and put it under
+`Talis/Extensions/` If TalisMS is properly installed in your project. It is done.
 ```
-mv path/to/source/Talis/Services/TheKof path/to/your/Talis/Services/.
+mv path/to/source/Talis/Extensions/TheKof path/to/your/Talis/Extensions/.
 ```
 
 **Use as standalone lib with autoloader**  
 Put `source/Talis` in your include path for PHP.  
 If you use autoloader, it should translate namespace separators \\ and underscores _ to url path separators /  
 and add .php at the end.  
-Example: The class `\Talis\Services\TheKof\SurveyMonkeyClient` will be included like that:   
+Example: The class `\Talis\Extensions\TheKof\SurveyMonkeyClient` will be included like that:   
 ```
-require_once('Talis/Services/TheKof/SurveyMonkeyClient.php');
+require_once('Talis/Extensions/TheKof/SurveyMonkeyClient.php');
 ```
 
 **Use as standalone lib with simple includes**  
@@ -66,7 +66,7 @@ is to show API only.** For working examples check the `examples` folder. `...` M
 **fetch** All your surveys. Make sure you have setup the right permission in the APP dashboard on Surveymonkey (Scope: View Surveys)  
 
 ```  
-use \Talis\Services\TheKof;
+use \Talis\Extensions\TheKof;
 $Client = new SurveyMonkeyClient(...);
 $surveys_list = $Client->surveys()->get(); //returns a collection (iterable) of your surveys. Defaults to page size of 100 (i.e. the first 100 surveys you own).
 $surveys_list = $Client->surveys()->get(2,10); //returns a collection (iterable) of your surveys. Page 2 where page size is 10 surveys

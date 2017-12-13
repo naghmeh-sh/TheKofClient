@@ -1,4 +1,4 @@
-<?php namespace Talis\Services\TheKof;
+<?php namespace Talis\Extensions\TheKof;
 /**
  * @author Itay Moav
  * @Date Nov 17 - 2017

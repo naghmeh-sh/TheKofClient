@@ -1,4 +1,4 @@
-<?php namespace Talis\Services\TheKof;
+<?php namespace Talis\Extensions\TheKof;
 /**
  * Data structure for holding a request details.
  * Usefull for mocking up tests, overriding the default use

@@ -1,4 +1,4 @@
-<?php namespace Talis\Services\TheKof;
+<?php namespace Talis\Extensions\TheKof;
 
 /**
  * Class is the "boss" of this entire system.
@@ -26,7 +26,7 @@ class SurveyMonkeyClient extends Client_a{
 	 * Shutdown, as this client has no model attached.
 	 * 
 	 * {@inheritDoc}
-	 * @see \Talis\Services\TheKof\Client_a::translate_to_model()
+	 * @see \Talis\Extensions\TheKof\Client_a::translate_to_model()
 	 */
 	protected function translate_to_model(\stdClass $single_item):Model_a{
 		return null; //do nothing. This is the base of the chain TODO potentially this can break the code. But, this is a piece of dead code...
@@ -36,7 +36,7 @@ class SurveyMonkeyClient extends Client_a{
 	 * shutdown as this client has no direct queries
 	 * 
 	 * {@inheritDoc}
-	 * @see \Talis\Services\TheKof\Client_a::add_url_part()
+	 * @see \Talis\Extensions\TheKof\Client_a::add_url_part()
 	 */
 	protected function add_url_part():void{
 		//do nothing. This is the base of the chain	

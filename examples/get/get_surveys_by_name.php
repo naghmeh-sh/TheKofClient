@@ -11,7 +11,7 @@ if(!is_string(Env::$survey_name_to_query)){
 	exit;
 }
 
-$Client = \Talis\Services\TheKof\SurveyMonkeyClient::init(Env::$survey_monkey_config,$http_client_wrapper);//this two params are coming from the env.php file
+$Client = \Talis\Extensions\TheKof\SurveyMonkeyClient::init(Env::$survey_monkey_config,$http_client_wrapper);//this two params are coming from the env.php file
 $query='title=test';// . Env::$survey_name_to_query;
 $surveys = $Client->surveys()->query($query)->get(1,2);
 foreach ($surveys as $survey){
