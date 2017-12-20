@@ -122,6 +122,16 @@ class Model_Collector extends Model_a{
 	protected function set_if_fully_loaded(){
 		$this->is_fully_loaded = isset($this->item_data->date_created);
 	}
+	
+	/**
+	 * The url you redirect user to take survey
+	 * 
+	 * @return string
+	 */
+	public function url():string{
+		$this->fully_load();
+		return $this->item_data->url;
+	}
 }
 
 abstract class Model_a{
@@ -199,7 +209,7 @@ abstract class Model_a{
  * @author Itay Moav
  * @date   20-11-2017
  */
-class Util_Collection implements \Iterator{
+class Util_Collection implements \Iterator,\Countable{
 	/**
 	 * Used to take the raw response and translate to the appropriate 
 	 * model object
@@ -250,6 +260,8 @@ class Util_Collection implements \Iterator{
 	 * @param Util_RawResponse $RawResponse
 	 */
 	private function parse_raw_response(Util_RawResponse $RawResponse):void{
+		$this->error_handle($RawResponse->http_code,$RawResponse->http_code_message);
+				
 		//NOTICE! if the query fetches only one result, then the response wont have [data].
 		//It will have ONLY the one, fully loaded, object
 		if(isset($RawResponse->body->id) && $RawResponse->body->id){//one full object was returned
@@ -268,7 +280,10 @@ class Util_Collection implements \Iterator{
 			$this->link_next				= $RawResponse->body->next??null;//at the edges u can still get null here
 		}
 	}
-	
+
+	public function count(){
+		return $this->total_entries_in_query; //CHECK THIS IS NOT THE GENERAL NUMBER FOR ALL PAGES
+	}
 	
 	public function current(){
 		$func = $this->translation_func;
@@ -290,6 +305,23 @@ class Util_Collection implements \Iterator{
 	public function rewind(){
 		reset($this->data_collection);
 	}
+	
+	/**
+	 * TODO remove this to proper place!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11111111111111111111111111111111111111111111111111111111111111111111111111111
+	 * 
+	 * @param int $http_code
+	 * @param string $http_message
+	 * @throws Util_CommunicationIssuesExceptions
+	 */
+	private function error_handle(int $http_code,string $http_message):void{
+		switch($http_code){
+			case 200:
+				break;
+			
+			default:
+				throw new Util_CommunicationIssuesExceptions($http_message,$http_code);
+		}
+	}
 }
 
 
@@ -308,6 +340,14 @@ class Util_RawResponse{
 		   $headers,
 		   $body
 	;
+	
+}
+
+
+class Util_CommunicationIssuesExceptions extends \DomainException{
+	public function __construct($message,$code){
+		parent::__construct("Failed communication with Survey Monkey. Code [{$code}] message [{$message}]",$code);
+	}
 }
 
 
