@@ -14,8 +14,11 @@ abstract class Model_a{
 	 */
 	protected $item_data;
 	
-	public function __construct(\stdClass $single_item){
-		$this->item_data = $single_item;
+	/**
+	 * @param \stdClass $single_item Pre loaded data. If u create a new object, this can be null.
+	 */
+	public function __construct(\stdClass $single_item = null){
+		$this->item_data = $single_item??new \stdClass;
 		$this->set_if_fully_loaded();
 	}
 	

@@ -110,7 +110,7 @@ class Util_Collection implements \Iterator,\Countable{
 	 * 
 	 * @param int $http_code
 	 * @param string $http_message
-	 * @throws Util_CommunicationIssuesExceptions
+	 * @throws \RuntimeException
 	 */
 	private function error_handle(int $http_code,string $http_message):void{
 		switch($http_code){
@@ -118,7 +118,7 @@ class Util_Collection implements \Iterator,\Countable{
 				break;
 			
 			default:
-				throw new Util_CommunicationIssuesExceptions($http_message,$http_code);
+				throw new \RuntimeException($http_message,$http_code);
 		}
 	}
 }

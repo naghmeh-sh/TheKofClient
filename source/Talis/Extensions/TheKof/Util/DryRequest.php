@@ -54,7 +54,7 @@ class Util_DryRequest{
 		return $this->method= $method?:$this->method;
 	}
 	
-	public function body($body=''){
+	public function body($body=null){
 		return $this->body = $body?:$this->body;
 	}
 	

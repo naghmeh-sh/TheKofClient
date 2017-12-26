@@ -73,7 +73,7 @@ class HTTPClientWrapper_ZendFW2 extends HTTPClientWrapper_a{
 	public function execute_dry_request(Util_DryRequest $DryRequest):Util_RawResponse{
 		echo "
 ==================================================
-DOing " . $DryRequest->url() . "
+DOing " . $DryRequest->method() . ': ' . $DryRequest->url() . "
 
 
 
@@ -81,6 +81,18 @@ DOing " . $DryRequest->url() . "
 		$this->concrete_http_client->setMethod($DryRequest->method());
 		$this->concrete_http_client->setUri($DryRequest->url());
 		$this->concrete_http_client->setHeaders($DryRequest->headers());
+		
+		switch($DryRequest->method()){
+			case self::METHOD_GET:
+				break;
+				
+			default:
+				$body_encoded = json_encode($DryRequest->body());
+				$this->concrete_http_client->setRawBody($body_encoded);
+				var_dump($body_encoded);
+				break;
+		}
+		
 		$res = $this->concrete_http_client->send();
 		$Response = new Util_RawResponse;
 		$Response->http_code 			= $res->getStatusCode();
@@ -149,8 +161,11 @@ abstract class Model_a{
 	 */
 	protected $item_data;
 	
-	public function __construct(\stdClass $single_item){
-		$this->item_data = $single_item;
+	/**
+	 * @param \stdClass $single_item Pre loaded data. If u create a new object, this can be null.
+	 */
+	public function __construct(\stdClass $single_item = null){
+		$this->item_data = $single_item??new \stdClass;
 		$this->set_if_fully_loaded();
 	}
 	
@@ -311,7 +326,7 @@ class Util_Collection implements \Iterator,\Countable{
 	 * 
 	 * @param int $http_code
 	 * @param string $http_message
-	 * @throws Util_CommunicationIssuesExceptions
+	 * @throws \RuntimeException
 	 */
 	private function error_handle(int $http_code,string $http_message):void{
 		switch($http_code){
@@ -319,7 +334,7 @@ class Util_Collection implements \Iterator,\Countable{
 				break;
 			
 			default:
-				throw new Util_CommunicationIssuesExceptions($http_message,$http_code);
+				throw new \RuntimeException($http_message,$http_code);
 		}
 	}
 }
@@ -341,13 +356,6 @@ class Util_RawResponse{
 		   $body
 	;
 	
-}
-
-
-class Util_CommunicationIssuesExceptions extends \DomainException{
-	public function __construct($message,$code){
-		parent::__construct("Failed communication with Survey Monkey. Code [{$code}] message [{$message}]",$code);
-	}
 }
 
 
@@ -406,7 +414,7 @@ class Util_DryRequest{
 		return $this->method= $method?:$this->method;
 	}
 	
-	public function body($body=''){
+	public function body($body=null){
 		return $this->body = $body?:$this->body;
 	}
 	
@@ -557,6 +565,38 @@ abstract class Client_a{
 	 */
 	public function get_one():Model_a{
 		return $this->get()->current();
+	}
+	
+	/**
+	 * POST dry will generate the request object, but wont post it.
+	 * 
+	 * @param Model_a $model
+	 * @return Util_DryRequest
+	 */
+	public function post_dry(Model_a $model):Util_DryRequest{
+		$this->current_dry_request->method(HTTPClientWrapper_a::METHOD_POST);
+		$this->current_dry_request->body($model->get_raw_data());
+		return $this->current_dry_request;
+		
+	}
+	
+	public function post(Model_a $model){
+		$this->post_dry($model);
+		$r = self::$HttpClientWrapper->execute_dry_request($this->current_dry_request);
+		var_dump($r);
+		echo "
+1";
+		die;
+	}
+	
+	/**
+	 * Alias for POST
+	 * 
+	 * @param Model_a $model
+	 * @return unknown
+	 */
+	public function create(Model_a $model){
+		return $this->post($model);	
 	}
 	
 	/**

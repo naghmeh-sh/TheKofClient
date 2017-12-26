@@ -3,38 +3,21 @@ use PHPUnit\Framework\TestCase;
 
 
 /**
- * Test the client basic functionality
- * validating the configuration file
+ * Testing the DryRequest generating functionality for
+ * Surveys
  * 
  * @author Itay Moav
  */
-class SurveyMonkeyClient_test extends TestCase {
+class DryRequestsSurveys_test extends TestCase {
 	static public function setUpBeforeClass(){
-		dbgn('Testing configuration values');
+		dbgn('======== DRY REQUESTS FOR SURVEYS');
 	}
-	
-	static private function get_proper_client(){
-		return Talis\Extensions\TheKof\SurveyMonkeyClient::init(Env::$survey_monkey_config,new TestHTTPClientWrapper);
-	}
-	
-	/**
-	 * Tests the get/set params
-	 */
-	public function testConfiguremissingAccessToekn(){
-		$this->expectException(InvalidArgumentException::class);
-		$Client = Talis\Extensions\TheKof\SurveyMonkeyClient::init([],new TestHTTPClientWrapper);
-	}
-	
-	public function testConfigureWithAccessToekn(){
-		$Client = self::get_proper_client();
-		$this->assertInstanceOf(\Talis\Extensions\TheKof\SurveyMonkeyClient::class, $Client,'Client did not initiate with test configuration');
-	}
-	
+
 	public function testGetDryRequest(){
-		dbgn('Testing GET requests');
+		dbgn('Testing GET');
 		// init
 		$access_token = Env::$survey_monkey_config['access_token'];
-		$Client = self::get_proper_client();
+		$Client = tests_get_proper_client();
 		$fake_survey_id = 1234;
 		$headers = [
 				'Authorization' => "bearer {$access_token}",
@@ -84,13 +67,4 @@ class SurveyMonkeyClient_test extends TestCase {
 		$this->assertEquals('GET', $ActualDryRequest->method(),'METHOD does not match');
 		$this->assertEquals($headers, $ActualDryRequest->headers(),'headers do not match');
 	}
-	
-	/**
-	 * I am using a mock HTTP client that emulates Zend Http Client (ZFW2)
-	 * methods and returns a mock JSON same as what SM would return.
-	 * Over time, more tests needs to be added for error handling.
-	 */
-//	public function testGetMockLiveRequest(){
-		
-//	}
 }

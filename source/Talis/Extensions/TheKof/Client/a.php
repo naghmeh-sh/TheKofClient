@@ -143,6 +143,37 @@ abstract class Client_a{
 	}
 	
 	/**
+	 * POST dry will generate the request object, but wont post it.
+	 * 
+	 * @param Model_a $model
+	 * @return Util_DryRequest
+	 */
+	public function post_dry(Model_a $model):Util_DryRequest{
+		$this->current_dry_request->method(HTTPClientWrapper_a::METHOD_POST);
+		$this->current_dry_request->body($model->get_raw_data());
+		return $this->current_dry_request;
+		
+	}
+	
+	public function post(Model_a $model){
+		$this->post_dry($model);
+		$r = self::$HttpClientWrapper->execute_dry_request($this->current_dry_request);
+		var_dump($r);
+		echo "\n1";
+		die;
+	}
+	
+	/**
+	 * Alias for POST
+	 * 
+	 * @param Model_a $model
+	 * @return unknown
+	 */
+	public function create(Model_a $model){
+		return $this->post($model);	
+	}
+	
+	/**
 	 * If requesting a specific id, add it to the url
 	 * @param integer $asset_id
 	 * @return Client_a

@@ -20,10 +20,22 @@ class HTTPClientWrapper_ZendFW2 extends HTTPClientWrapper_a{
 	 * @return Util_RawResponse
 	 */
 	public function execute_dry_request(Util_DryRequest $DryRequest):Util_RawResponse{
-		echo "\n==================================================\nDOing " . $DryRequest->url() . "\n\n\n\n";
+		echo "\n==================================================\nDOing " . $DryRequest->method() . ': ' . $DryRequest->url() . "\n\n\n\n";
 		$this->concrete_http_client->setMethod($DryRequest->method());
 		$this->concrete_http_client->setUri($DryRequest->url());
 		$this->concrete_http_client->setHeaders($DryRequest->headers());
+		
+		switch($DryRequest->method()){
+			case self::METHOD_GET:
+				break;
+				
+			default:
+				$body_encoded = json_encode($DryRequest->body());
+				$this->concrete_http_client->setRawBody($body_encoded);
+				var_dump($body_encoded);
+				break;
+		}
+		
 		$res = $this->concrete_http_client->send();
 		$Response = new Util_RawResponse;
 		$Response->http_code 			= $res->getStatusCode();

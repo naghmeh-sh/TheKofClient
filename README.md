@@ -1,4 +1,4 @@
-# STAY TUNED, FIRST VERSION WILL COME BY DECEMBER 2017. 
+# Stable release v0.2.5 is out 
 
 # TheKofClient
 A PHP client for [Survey Monkey API V3 https://developer.surveymonkey.com/api/v3/](https://developer.surveymonkey.com/api/v3/)
@@ -25,7 +25,7 @@ Current Version: 0.01
 1. **TheKofClient** uses Zend Framework > 2.x HTTP client to communicate with SurveyMonkey servers.  
 Later versions of this client might support a more generic way to communicate.  
 
-2. While **TheKofClient** is part of the TalisMS library, It is in name only. It follows the same naming convetions. 
+2. While **TheKofClient** is part of the TalisMS library, It is so in name only. It follows the same naming convetions. 
 But, it is a stand alone project.  
 
 3. An account at SurveyMonkey with permissions to build apps.
@@ -52,7 +52,7 @@ require_once('Talis/Extensions/TheKof/SurveyMonkeyClient.php');
 ```
 
 **Use as standalone lib with simple includes**  
-For this, copy the file `source/TheKofClientBundle.php` into your project and `require_once(path/to/TheKofClientBundle.php)`.
+For this, copy the file `boundle/thekofclient.php` into your project and `require_once(path/to/thekofclient.php)`.
 
 
 ## Quick introduction to the API
