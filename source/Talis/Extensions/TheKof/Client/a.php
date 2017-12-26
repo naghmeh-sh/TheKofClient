@@ -155,12 +155,17 @@ abstract class Client_a{
 		
 	}
 	
-	public function post(Model_a $model){
+	/**
+	 * Takes the input model, creates in SM
+	 * and populate the rest of the values in it from the response.
+	 * 
+	 * @param Model_a $model
+	 * @return Model_a
+	 */
+	public function post(Model_a $model):Model_a{
 		$this->post_dry($model);
-		$r = self::$HttpClientWrapper->execute_dry_request($this->current_dry_request);
-		var_dump($r);
-		echo "\n1";
-		die;
+		$raw_response = self::$HttpClientWrapper->execute_dry_request($this->current_dry_request);
+		return $model->change_state($raw_response->body);
 	}
 	
 	/**

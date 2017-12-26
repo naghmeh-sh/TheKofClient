@@ -32,7 +32,6 @@ class HTTPClientWrapper_ZendFW2 extends HTTPClientWrapper_a{
 			default:
 				$body_encoded = json_encode($DryRequest->body());
 				$this->concrete_http_client->setRawBody($body_encoded);
-				var_dump($body_encoded);
 				break;
 		}
 		

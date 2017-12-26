@@ -1,5 +1,6 @@
 <?php namespace Talis\Extensions\TheKof;
 abstract class Model_a{
+
 	/**
 	 * When querying a collection (as opposed to one item by id) the result returns
 	 * the minimum needed fields.
@@ -31,6 +32,7 @@ abstract class Model_a{
 	public function fully_load():Model_a{
 		if(!$this->is_fully_loaded){
 			$this->item_data = $this->get_client()->get_one()->item_data;
+			$this->set_if_fully_loaded();
 		}
 		return $this;
 	}
@@ -42,6 +44,20 @@ abstract class Model_a{
 	 */
 	public function get_raw_data():\stdClass{
 		return $this->item_data;
+	}
+	
+	/**
+	 * When sending a model to a Client to create/update on SM
+	 * The response is the updated data. I will refresh the Model
+	 * with the new data.
+	 * 
+	 * @param \stdClass $raw_data
+	 * @return Model_a
+	 */
+	public function change_state(\stdClass $raw_data):Model_a{
+		$this->item_data = $raw_data;
+		$this->set_if_fully_loaded();
+		return $this;
 	}
 
 	/**

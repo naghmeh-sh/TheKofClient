@@ -6,7 +6,7 @@ class Model_Collector extends Model_a{
 	}
 	
 	protected function set_if_fully_loaded(){
-		$this->is_fully_loaded = isset($this->item_data->date_created);
+		$this->is_fully_loaded = isset($this->item_data->id) && isset($this->item_data->date_created);
 	}
 	
 	/**

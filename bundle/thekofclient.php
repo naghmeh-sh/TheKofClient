@@ -89,7 +89,6 @@ DOing " . $DryRequest->method() . ': ' . $DryRequest->url() . "
 			default:
 				$body_encoded = json_encode($DryRequest->body());
 				$this->concrete_http_client->setRawBody($body_encoded);
-				var_dump($body_encoded);
 				break;
 		}
 		
@@ -110,7 +109,7 @@ class Model_Survey extends Model_a{
 	}
 	
 	protected function set_if_fully_loaded(){
-		$this->is_fully_loaded = isset($this->item_data->response_count);
+		$this->is_fully_loaded = isset($this->item_data->id) && isset($this->item_data->response_count);
 	}
 	
 	/**
@@ -132,7 +131,7 @@ class Model_Collector extends Model_a{
 	}
 	
 	protected function set_if_fully_loaded(){
-		$this->is_fully_loaded = isset($this->item_data->date_created);
+		$this->is_fully_loaded = isset($this->item_data->id) && isset($this->item_data->date_created);
 	}
 	
 	/**
@@ -147,6 +146,7 @@ class Model_Collector extends Model_a{
 }
 
 abstract class Model_a{
+
 	/**
 	 * When querying a collection (as opposed to one item by id) the result returns
 	 * the minimum needed fields.
@@ -178,6 +178,7 @@ abstract class Model_a{
 	public function fully_load():Model_a{
 		if(!$this->is_fully_loaded){
 			$this->item_data = $this->get_client()->get_one()->item_data;
+			$this->set_if_fully_loaded();
 		}
 		return $this;
 	}
@@ -189,6 +190,20 @@ abstract class Model_a{
 	 */
 	public function get_raw_data():\stdClass{
 		return $this->item_data;
+	}
+	
+	/**
+	 * When sending a model to a Client to create/update on SM
+	 * The response is the updated data. I will refresh the Model
+	 * with the new data.
+	 * 
+	 * @param \stdClass $raw_data
+	 * @return Model_a
+	 */
+	public function change_state(\stdClass $raw_data):Model_a{
+		$this->item_data = $raw_data;
+		$this->set_if_fully_loaded();
+		return $this;
 	}
 
 	/**
@@ -580,13 +595,17 @@ abstract class Client_a{
 		
 	}
 	
-	public function post(Model_a $model){
+	/**
+	 * Takes the input model, creates in SM
+	 * and populate the rest of the values in it from the response.
+	 * 
+	 * @param Model_a $model
+	 * @return Model_a
+	 */
+	public function post(Model_a $model):Model_a{
 		$this->post_dry($model);
-		$r = self::$HttpClientWrapper->execute_dry_request($this->current_dry_request);
-		var_dump($r);
-		echo "
-1";
-		die;
+		$raw_response = self::$HttpClientWrapper->execute_dry_request($this->current_dry_request);
+		return $model->change_state($raw_response->body);
 	}
 	
 	/**
