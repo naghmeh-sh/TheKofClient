@@ -125,7 +125,14 @@ class Model_Survey extends Model_a{
 }
 
 class Model_Collector extends Model_a{
-
+	const REDIRECT_TYPE__URL	= 'url',
+		  REDIRECT_TYPE__CLOSE  = 'close',
+		  REDIRECT_TYPE__LOOP   = 'loop',
+		  		
+		  TYPE__WEBLINK			= 'weblink',
+		  TYPE__EMAIL			= 'email' 
+	;
+	
 	protected function get_client():Client_a{
 		return (new SurveyMonkeyClient)->collector($this->item_data->id);
 	}
@@ -201,7 +208,8 @@ abstract class Model_a{
 	 * @return Model_a
 	 */
 	public function change_state(\stdClass $raw_data):Model_a{
-		$this->item_data = $raw_data;
+		$this->item_data       = $raw_data;
+		$this->is_fully_loaded = false;
 		$this->set_if_fully_loaded();
 		return $this;
 	}
@@ -612,9 +620,9 @@ abstract class Client_a{
 	 * Alias for POST
 	 * 
 	 * @param Model_a $model
-	 * @return unknown
+	 * @return Model_a
 	 */
-	public function create(Model_a $model){
+	public function create(Model_a $model):Model_a{
 		return $this->post($model);	
 	}
 	
