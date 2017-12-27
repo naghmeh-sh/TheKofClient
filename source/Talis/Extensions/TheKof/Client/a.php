@@ -172,9 +172,9 @@ abstract class Client_a{
 	 * Alias for POST
 	 * 
 	 * @param Model_a $model
-	 * @return unknown
+	 * @return Model_a
 	 */
-	public function create(Model_a $model){
+	public function create(Model_a $model):Model_a{
 		return $this->post($model);	
 	}
 	

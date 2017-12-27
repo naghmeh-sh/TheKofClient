@@ -55,7 +55,8 @@ abstract class Model_a{
 	 * @return Model_a
 	 */
 	public function change_state(\stdClass $raw_data):Model_a{
-		$this->item_data = $raw_data;
+		$this->item_data       = $raw_data;
+		$this->is_fully_loaded = false;
 		$this->set_if_fully_loaded();
 		return $this;
 	}
